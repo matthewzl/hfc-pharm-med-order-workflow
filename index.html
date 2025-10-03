@@ -184,7 +184,7 @@
           meta: 'Look up each med on the <a href=\"https://yaleedu.sharepoint.com/:x:/r/sites/HAVENFreeClinic/_layouts/15/Doc.aspx?sourcedoc=%7B2F6AC501-0F24-473C-BA99-7387E850F08E%7D&file=Dispensary%20of%20Hope%20Formulary%20July%201%202025.xlsx&wdOrigin=TEAMS-MAGLEV.p2p_ns.rwc&action=default&mobileredirect=true\" target="_blank" rel="noopener noreferrer">Dispensary of Hope (DoH) formulary</a>. to verify.',
           choices: [
             { key: 'yes', label: 'Yes — all meds are on DoH', next: 'doh_paperwork_all' },
-            { key: 'no',  label: 'No — not all meds are on DoH', next: 'doh_some_commute' }
+            { key: 'no',  label: 'No — not all meds are on DoH', next: 'local_chain' }
           ]
         },
 
@@ -273,7 +273,18 @@
           meta: '<b>ShopRite</b>: Orange, East Haven, and Hamden locations only.<br><b>Stop & Shop</b>: West Haven, East Haven, and New Haven locations only.',
           choices: [
             { key: 'yes', label: 'Yes — one of these works', next: 'act_local_chain' },
-            { key: 'no',  label: 'No — none work', next: 'msg_dir_route' }
+            { key: 'no',  label: 'No — none work', next: 'delivery_after_local' }
+          ]
+        },
+
+        // Follow-up: delivery after local-chain unavailability
+        delivery_after_local: {
+          kind: 'question',
+          title: 'Can the patient receive a delivery?',
+          meta: 'If yes, proceed with HealthWarehouse (mail-order). If no, escalate to Pharmacy Director.',
+          choices: [
+            { key: 'yes', label: 'Yes — delivery is possible', next: 'act_hw' },
+            { key: 'no',  label: 'No — delivery not possible', next: 'msg_dir_route' }
           ]
         },
 
