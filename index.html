@@ -13,12 +13,14 @@
     .subtitle{color:var(--muted);font-size:14px}
     .subtitle a{color:var(--accent);text-decoration:none}
     .subtitle a:hover{text-decoration:underline}
-    .card{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+    .card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:0 4px 12px rgba(0,0,0,.05)}
     .q h2{margin:4px 0 4px;font-size:clamp(18px,2.2vw,22px)}
     .meta{color:var(--muted);font-size:13px}
     .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:12px}
-    button.choice{ text-align:left;background:var(--panel-2);color:var(--ink);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;transition:transform .08s ease,border-color .2s ease}
+    button.choice{ text-align:left;background:var(--panel-2);color:var(--ink);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;transition:transform .08s ease,border-color .2s ease;font-weight:600;}
     button.choice:hover{ transform:translateY(-1px);border-color:var(--accent)}
+/*    button.choice[data-key="yes"]{background:#ecfdf5;color:#166534;border-color:#bbf7d0}
+    button.choice[data-key="no"]{background:#fef2f2;color:#991b1b;border-color:#fecaca}*/
     .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center}
     .btn{border:1px solid var(--border);background:var(--panel-2);color:var(--ink);padding:10px 14px;border-radius:12px;font-weight:600;cursor:pointer}
     .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;border:none}
@@ -29,11 +31,13 @@
     .footer{margin-top:16px;color:var(--muted);font-size:12px}
     .kbd{font-family:ui-monospace,Menlo,Consolas,monospace;background:#e5e7eb;border:1px solid var(--border);padding:2px 6px;border-radius:6px}
     .kv{display:grid;grid-template-columns:140px 1fr;gap:8px;align-items:start}
-    .pathbar{margin:12px 0 0 0;padding:12px;border:1px solid var(--border);border-radius:12px;background:#f3f4f6;font-size:13px;color:var(--muted)}
+    .pathbar{margin:12px 0 0 0;padding:12px;border:1px solid var(--border);border-radius:12px;background:#ffffff;font-size:13px;color:#4b5563}
     .pathbar h4{margin:0 0 6px;font-size:13px;font-weight:600;color:var(--ink)}
     .pathbar .kv{grid-template-columns:28px 1fr}
     .diag{margin:12px 0 0 0;padding:10px;border:1px solid var(--danger);border-radius:12px;background:#fee2e2;color:#991b1b;display:none}
     .diag.ok{border-color:#15803d;background:#dcfce7;color:#14532d}
+    /* Step badge */
+    .step-badge{position:absolute;top:12px;right:12px;background:#ffffff;border:1px solid var(--border);color:var(--muted);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.06);user-select:none}
   </style>
 </head>
 <body>
@@ -44,6 +48,7 @@
     </header>
 
     <div class="card">
+      <div id="stepBadge" class="step-badge" aria-live="polite" aria-atomic="true">Step 1</div>
       <div id="app"></div>
       <div class="row" id="navControls" style="margin-top:12px">
         <div class="row" style="gap:8px">
@@ -58,7 +63,7 @@
       <div class="diag" id="diag"></div>
     </div>
 
-    <div class="footer">Internal helper for clinic workflow. Please use clinical judgment.</div>
+    <div class="footer">Last updated October 3, 2025. Please use clinical judgment.</div>
   </div>
 
   <script>
@@ -103,7 +108,7 @@
         bexa_combo: {
           kind: 'question',
           title: 'Is the expensive med an SGLT2 inhibitor? If so, is it or can it be bexagliflozin (Brenzavvy)?',
-          meta: 'If NO, that implies an unaddressed expensive med → escalate to Pharmacy Director.',
+          meta: 'Brenzavvy can be obtained more affordably!',
           choices: [
             { key: 'yes', label: 'Yes — it is SGLT2i and can be Brenzavvy', next: 'act_brenzavvy' },
             { key: 'no',  label: 'No — not SGLT2i / not Brenzavvy', next: 'msg_dir_expensive' }
@@ -181,7 +186,7 @@
         doh_all: {
           kind: 'question',
           title: 'Are ALL required meds available on the DoH formulary?',
-          meta: 'Look up each med on the <a href=\"https://yaleedu.sharepoint.com/:x:/r/sites/HAVENFreeClinic/_layouts/15/Doc.aspx?sourcedoc=%7B2F6AC501-0F24-473C-BA99-7387E850F08E%7D&file=Dispensary%20of%20Hope%20Formulary%20July%201%202025.xlsx&wdOrigin=TEAMS-MAGLEV.p2p_ns.rwc&action=default&mobileredirect=true\" target="_blank" rel="noopener noreferrer">Dispensary of Hope (DoH) formulary</a>. to verify.',
+          meta: 'Look up each med on the <a href=\"https://yaleedu.sharepoint.com/:x:/r/sites/HAVENFreeClinic/_layouts/15/Doc.aspx?sourcedoc=%7B2F6AC501-0F24-473C-BA99-7387E850F08E%7D&file=Dispensary%20of%20Hope%20Formulary%20July%201%202025.xlsx&wdOrigin=TEAMS-MAGLEV.p2p_ns.rwc&action=default&mobileredirect=true\" target="_blank" rel="noopener noreferrer">Dispensary of Hope (DoH) formulary</a> to verify. If a given med is not present, consider a possible alternative available on the formulary.',
           choices: [
             { key: 'yes', label: 'Yes — all meds are on DoH', next: 'doh_paperwork_all' },
             { key: 'no',  label: 'No — not all meds are on DoH', next: 'local_chain' }
@@ -409,6 +414,7 @@
       if (backBtn) backBtn.disabled = State.history.length===0;
 
       updatePathbar();
+      updateStepBadge();
     }
 
     function renderPath(){
@@ -514,6 +520,26 @@
       box.classList.remove('ok');
       box.innerHTML = '<strong>Self-test failures:</strong><br>' + msgs.map(m=>`• ${m}`).join('<br>');
       box.style.display = 'block';
+    }
+
+    // Helpers: step badge
+    function ensureStepBadge(){
+      const card = document.querySelector('.card');
+      if (!document.getElementById('stepBadge') && card){
+        const b = document.createElement('div');
+        b.id = 'stepBadge';
+        b.className = 'step-badge';
+        b.textContent = 'Step 1';
+        card.appendChild(b);
+      }
+    }
+
+    function updateStepBadge(){
+      ensureStepBadge();
+      const b = document.getElementById('stepBadge');
+      if (!b) return;
+      const n = (State.history?.length || 0) + 1; // current card index
+      b.textContent = `Step ${n}`;
     }
 
     // Boot
